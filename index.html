@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periodic Table & Chemical Workbench — IUPAC 118 Interactive Lab</title>
+  <meta name="description" content="Tabel Periodik Interaktif 118 Unsur IUPAC, Spektroskopi Emisi Optik NIST, Simulator Fase Termodinamika, dan Laboratorium Stoikiometri.">
+  <meta name="theme-color" content="#09090b">
+  <meta property="og:title" content="Periodic Table & Chemical Workbench">
+  <meta property="og:description" content="Eksplorasi 118 Unsur IUPAC, Spektrum Emisi Atom, Orbital Aufbau, dan Simulator Sintesis Kimia.">
+  <meta property="og:type" content="website">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+
+  <!-- Non-Blocking Font Loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="./styles/tokens.css">
+  <link rel="stylesheet" href="./styles/layout.css">
+  <link rel="stylesheet" href="./styles/components.css">
+</head>
+<body>
+
+  <!-- UNIFIED COMMAND HEADER -->
+  <header class="topbar" role="banner">
+    <div class="brand-group">
+      <div class="brand-mark" aria-hidden="true">Pt</div>
+      <div>
+        <h1 class="brand-title">Periodic Table Workbench</h1>
+        <div class="brand-subtitle">Atomic Spectroscopy · Stoichiometry · Nuclear Synthesis</div>
+      </div>
+    </div>
+
+    <nav class="command-controls" aria-label="Kontrol Utama dan Navigasi">
+      <!-- Search Input with Ctrl+K trigger -->
+      <div class="search-wrapper">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="search" id="searchInput" class="search-input" placeholder="Cari unsur, simbol, Z..." aria-label="Cari unsur berdasarkan nama, simbol, atau nomor atom">
+        <span class="kbd-badge" aria-hidden="true">Ctrl K</span>
+      </div>
+
+      <!-- Thermodynamic Temperature Slider -->
+      <div class="temp-pill" role="group" aria-label="Simulator Suhu Termodinamika">
+        <label for="tempSlider" class="temp-label" id="tempDisplay">298 K (25 °C)</label>
+        <input type="range" id="tempSlider" class="temp-slider" min="0" max="6000" value="298" step="10">
+        <button type="button" class="btn-ghost-xs" id="btnResetTemp" title="Reset ke suhu ruang standar (298 K)">298K</button>
+      </div>
+
+      <!-- Heatmap Mode Selector -->
+      <select id="colorMode" class="select-clean" aria-label="Mode Visualisasi Tabel">
+        <option value="category">Mode: Kategori Kimia</option>
+        <option value="phase">Mode: Fase Termodinamika</option>
+        <option value="electronegativity">Heatmap: Elektronegativitas</option>
+        <option value="mass">Heatmap: Massa Atom</option>
+        <option value="melting">Heatmap: Titik Leleh</option>
+      </select>
+
+      <!-- Toggle Synthesis Lab -->
+      <button type="button" class="btn-tool" id="btnLabToggle" aria-expanded="false" aria-controls="drawerLab">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M10 2v7.31"></path>
+          <path d="M14 9.3V1.99"></path>
+          <path d="M8.5 2h7"></path>
+          <path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path>
+          <path d="M5.52 16h12.96"></path>
+        </svg>
+        <span>Lab Sintesis</span>
+      </button>
+
+      <!-- Toggle Comparator -->
+      <button type="button" class="btn-tool" id="btnCompareToggle" aria-expanded="false" aria-controls="drawerCompare">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span>Komparator</span>
+      </button>
+
+      <!-- Toggle Dukungan (Saweria Opsi B) -->
+      <button type="button" class="btn-tool btn-support" id="btnSupportToggle" aria-expanded="false" aria-controls="drawerSupport">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+        </svg>
+        <span>Dukungan</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- DRAWER 1: CHEMICAL & NUCLEAR SYNTHESIS LAB -->
+  <section class="drawer-section" id="drawerLab" aria-label="Laboratorium Sintesis Kimia dan Fusi Nuklir">
+    <div class="workbench-card">
+      <div class="workbench-header">
+        <div class="workbench-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path>
+          </svg>
+          <span>Synthesis & Stoichiometry Workbench</span>
+          <span class="workbench-sub">Pilih slot reaktan lalu klik tombol [Lab] pada sel unsur di tabel</span>
+        </div>
+
+        <div class="segmented-control" role="tablist">
+          <button type="button" class="seg-btn active" id="tabChem" role="tab" aria-selected="true" data-mode="chemical">
+            Reaksi Kimia & Stoikiometri
+          </button>
+          <button type="button" class="seg-btn" id="tabFusion" role="tab" aria-selected="false" data-mode="fusion">
+            Transmutasi Fusi Inti (Z₁ + Z₂)
+          </button>
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <div class="reactant-slot active-slot" id="slotA" role="button" tabindex="0" aria-label="Pilih Slot Reaktan 1">
+          <div class="slot-header">
+            <span>Reaktan 01</span>
+            <span class="slot-dot"></span>
+          </div>
+          <div class="slot-body">
+            <span class="slot-sym" id="slotASym">Na</span>
+            <span class="slot-name" id="slotAName">Natrium</span>
+          </div>
+          <div class="slot-meta" id="slotASub">Z = 11 · 22.990 g/mol</div>
+        </div>
+
+        <div class="lab-op-col" aria-hidden="true">+</div>
+
+        <div class="reactant-slot" id="slotB" role="button" tabindex="0" aria-label="Pilih Slot Reaktan 2">
+          <div class="slot-header">
+            <span>Reaktan 02</span>
+            <span class="slot-dot"></span>
+          </div>
+          <div class="slot-body">
+            <span class="slot-sym" id="slotBSym">Cl</span>
+            <span class="slot-name" id="slotBName">Klorin</span>
+          </div>
+          <div class="slot-meta" id="slotBSub">Z = 17 · 35.450 g/mol</div>
+        </div>
+
+        <button type="button" class="btn-run-synth" id="btnRunSynth">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Sintesis</span>
+        </button>
+
+        <div class="synth-output" aria-live="polite">
+          <canvas id="reactionCanvas" width="100" height="100" aria-label="Visualisasi Reaksi"></canvas>
+          <div>
+            <span class="synth-tag" id="resBadge">Ikatan Ionik</span>
+            <div class="synth-formula" id="resFormula">NaCl</div>
+            <div class="synth-name" id="resTitle">Natrium Klorida</div>
+            <p class="synth-desc" id="resDesc"></p>
+          </div>
+          <div class="stoich-panel">
+            <div class="stoich-row">
+              <span>Massa Molar</span>
+              <strong id="resMolarMass">58.440 g/mol</strong>
+            </div>
+            <div class="stoich-row">
+              <span>Geometri / Struktur</span>
+              <strong id="resGeometry">Kisi Kristal Kubik</strong>
+            </div>
+            <div class="stoich-row">
+              <span>Selisih ΔEN</span>
+              <strong id="resDeltaEn">2.23</strong>
+            </div>
+            <div>
+              <div class="mass-bar-track">
+                <div class="mass-bar-fill-a" id="barMassA" style="width: 39.3%"></div>
+                <div class="mass-bar-fill-b" id="barMassB" style="width: 60.7%"></div>
+              </div>
+              <div class="mass-legend">
+                <span id="lblMassA">Na: 39.3%</span>
+                <span id="lblMassB">Cl: 60.7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="workbench-footer">
+        <div class="preset-list" id="presetContainer">
+          <span class="preset-label">Preset:</span>
+          <button type="button" class="preset-btn" data-z1="1" data-z2="8" data-mode="chemical">H₂O (Air)</button>
+          <button type="button" class="preset-btn" data-z1="11" data-z2="17" data-mode="chemical">NaCl (Garam)</button>
+          <button type="button" class="preset-btn" data-z1="26" data-z2="8" data-mode="chemical">Fe₂O₃ (Hematit)</button>
+          <button type="button" class="preset-btn" data-z1="6" data-z2="8" data-mode="chemical">CO₂ (Karbon Dioksida)</button>
+          <button type="button" class="preset-btn" data-z1="29" data-z2="50" data-mode="chemical">Cu₃Sn (Perunggu)</button>
+          <button type="button" class="preset-btn" data-z1="6" data-z2="8" data-mode="fusion">Fusi: C + O → Si</button>
+          <button type="button" class="preset-btn" data-z1="20" data-z2="26" data-mode="fusion">Fusi: Ca + Fe → Pd</button>
+        </div>
+        <div class="lab-history-log" id="labHistoryText">
+          Log: Siap melakukan sintesis
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRAWER 2: SIDE-BY-SIDE ELEMENT COMPARATOR -->
+  <section class="drawer-section" id="drawerCompare" aria-label="Komparator Parameter Unsur">
+    <div class="workbench-card">
+      <div class="workbench-header">
+        <div class="workbench-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Multi-Parameter Element Comparator</span>
+          <span class="workbench-sub">Bandingkan metrik fisik & termodinamika melalui normalisasi Radar SVG</span>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-col-header">
+            <span class="compare-subject-a">SUBJEK A</span>
+            <select id="compSelectA" class="select-clean" aria-label="Pilih Unsur Subjek A"></select>
+          </div>
+          <table class="compare-table" id="compTableA"></table>
+        </div>
+
+        <div class="radar-box">
+          <svg id="radarSvg" width="240" height="210" viewBox="0 0 240 210" role="img" aria-label="Grafik Radar Perbandingan Unsur"></svg>
+          <div class="radar-legend">
+            <span><strong style="color:var(--accent-blue);">■</strong> Subjek A</span>
+            <span><strong style="color:var(--accent-emerald);">■</strong> Subjek B</span>
+          </div>
+        </div>
+
+        <div class="compare-col">
+          <div class="compare-col-header">
+            <span class="compare-subject-b">SUBJEK B</span>
+            <select id="compSelectB" class="select-clean" aria-label="Pilih Unsur Subjek B"></select>
+          </div>
+          <table class="compare-table" id="compTableB"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRAWER 3: DUKUNGAN PENGEMBANG (OPSI B — DEDICATED SAWERIA FEATURE) -->
+  <section class="drawer-section" id="drawerSupport" aria-label="Dukungan Pengembang via Saweria">
+    <div class="workbench-card support-card">
+      <div class="workbench-header">
+        <div class="workbench-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" aria-hidden="true">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+          </svg>
+          <span>Dukung Pengembangan Proyek Open-Source</span>
+          <span class="workbench-sub">Apresiasi Anda menjaga aplikasi edukasi sains ini tetap gratis dan bebas iklan</span>
+        </div>
+        <span class="support-badge">Kreator: @nocturnalist</span>
+      </div>
+
+      <div class="support-grid">
+        <div class="support-info">
+          <h3>Mengapa Mendukung Periodic Table Workbench?</h3>
+          <p>
+            Proyek ini dibangun dengan standar rekayasa perangkat lunak modern dan data terverifikasi dari <strong>IUPAC</strong> serta <strong>NIST Atomic Spectra Database</strong> agar pelajar, mahasiswa, dan peneliti di Indonesia memiliki akses ke laboratorium kimia virtual yang cepat, akurat, dan bebas biaya berlangganan.
+          </p>
+          <div class="support-pillars">
+            <div class="pillar-item">
+              <strong>100% Gratis & Tanpa Iklan</strong>
+              <span>Seluruh fitur simulasi termodinamika, spektroskopi, dan stoikiometri terbuka penuh tanpa paywall.</span>
+            </div>
+            <div class="pillar-item">
+              <strong>Pembaruan Basis Data Ilmiah</strong>
+              <span>Mendukung kurasi senyawa baru, isotop radioaktif, dan modul visualisasi orbital 3D berikutnya.</span>
+            </div>
+          </div>
+          <div class="support-cta-row">
+            <a href="https://saweria.co/nocturnalist" target="_blank" rel="noopener noreferrer" class="btn-saweria-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Kirim Dukungan di Saweria (saweria.co/nocturnalist)</span>
+            </a>
+            <button type="button" class="btn-tool" id="btnCopyShareUrl" title="Salin tautan konfigurasi eksperimen saat ini">
+              Bagikan Tautan Eksperimen Ini
+            </button>
+          </div>
+        </div>
+
+        <div class="support-qr-box">
+          <div class="qr-frame" aria-hidden="true">
+            <svg viewBox="0 0 120 120" width="110" height="110" fill="none">
+              <rect width="120" height="120" rx="8" fill="#18181c" stroke="rgba(255,255,255,0.15)"/>
+              <rect x="14" y="14" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
+              <rect x="22" y="22" width="12" height="12" fill="#f59e0b"/>
+              <rect x="78" y="14" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
+              <rect x="86" y="22" width="12" height="12" fill="#f59e0b"/>
+              <rect x="14" y="78" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
+              <rect x="22" y="86" width="12" height="12" fill="#f59e0b"/>
+              <path d="M54 20h12v12H54zM54 44h12v24H54zM46 78h16v12H46zM74 54h16v16H74zM78 82h24v20H78z" fill="#fafafa" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="qr-caption">
+            <strong>Saweria Nocturnalist</strong>
+            <span>QRIS · GoPay · OVO · DANA · LinkAja</span>
+            <a href="https://saweria.co/nocturnalist" target="_blank" rel="noopener noreferrer" class="qr-link">https://saweria.co/nocturnalist</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER & PHASE TELEMETRY BAR (TANPA FITUR FAVORIT) -->
+  <div class="subbar">
+    <div class="category-pills" id="categoryLegend" role="toolbar" aria-label="Filter Kategori Kimia"></div>
+    <div class="phase-summary" aria-live="polite">
+      <span class="phase-item"><span class="phase-dot-sm" style="background:#38bdf8;"></span>Padat: <strong id="countSolid">0</strong></span>
+      <span class="phase-item"><span class="phase-dot-sm" style="background:#10b981;"></span>Cair: <strong id="countLiquid">0</strong></span>
+      <span class="phase-item"><span class="phase-dot-sm" style="background:#f43f5e;"></span>Gas: <strong id="countGas">0</strong></span>
+      <span class="phase-item"><span class="phase-dot-sm" style="background:#71717a;"></span>N/A: <strong id="countUnknown">0</strong></span>
+    </div>
+  </div>
+
+  <!-- MAIN PERIODIC TABLE GRID -->
+  <main class="table-container">
+    <div class="periodic-grid" id="periodicGrid" role="grid" aria-label="Tabel Periodik Unsur Kimia 118 Unsur">
+      <!-- Inline Center Inspector -->
+      <div class="center-inspector" id="spotlightBox" aria-live="polite">
+        <div class="insp-tile" id="spBox">
+          <div class="insp-z" id="spNum">1</div>
+          <div class="insp-sym" id="spSym">H</div>
+          <div class="insp-mass" id="spMass">1.008</div>
+        </div>
+
+        <div class="insp-main">
+          <div class="insp-header-row">
+            <h2>
+              <span id="spName">Hidrogen</span>
+              <span class="insp-cat-tag" id="spCat">Nonlogam Reaktif</span>
+            </h2>
+            <!-- Tombol Aksi Cepat untuk Pengguna Layar Sentuh (Mobile/Tablet) -->
+            <div class="insp-touch-actions">
+              <button type="button" class="btn-ghost-xs" id="btnInspOpenModal" title="Buka rincian lengkap unsur ini">Detail</button>
+              <button type="button" class="btn-ghost-xs" id="btnInspSendLab" title="Masukkan ke slot Lab Sintesis">+ Lab</button>
+            </div>
+          </div>
+          <div class="insp-metrics">
+            <div class="metric-cell"><small>Konfigurasi</small><strong id="spConfig">1s¹</strong></div>
+            <div class="metric-cell"><small>Elektronegativitas</small><strong id="spEn">2.20</strong></div>
+            <div class="metric-cell"><small>Fase (Suhu Ini)</small><strong id="spPhase">Gas</strong></div>
+            <div class="metric-cell"><small>Titik Leleh</small><strong id="spMelt">13.99 K</strong></div>
+            <div class="metric-cell"><small>Titik Didih</small><strong id="spBoil">20.27 K</strong></div>
+            <div class="metric-cell"><small>Oksidasi Utama</small><strong id="spOx">+1, -1</strong></div>
+          </div>
+        </div>
+
+        <!-- Live Emission Spectrum & Aufbau Spin Preview -->
+        <div class="insp-quantum">
+          <div>
+            <div class="quantum-label">
+              <span>Spektrum Emisi NIST (380–750 nm)</span>
+              <span id="spPeakWl">656.3 nm</span>
+            </div>
+            <canvas id="inspSpectrumCanvas" class="spectrum-bar" width="280" height="22"></canvas>
+          </div>
+          <div>
+            <div class="quantum-label">
+              <span>Diagram Orbital Valensi (Aufbau ↑↓)</span>
+            </div>
+            <div class="orbital-boxes-mini" id="inspOrbitalBoxes"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- DETAILED ELEMENT MODAL -->
+  <div class="modal-overlay" id="atomModal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal-window">
+      <button type="button" class="btn-close-modal" id="btnCloseModal" aria-label="Tutup Jendela Detail (Esc)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="modal-left">
+        <div class="modal-left-header">
+          <span>MODEL ORBITAL BOHR</span>
+          <span id="mAtomicNum">Z = 1</span>
+        </div>
+        <canvas id="bohrCanvas" width="250" height="250" aria-label="Animasi Orbital Kulit Bohr"></canvas>
+        <div class="shell-badges" id="modalShellPills"></div>
+      </div>
+
+      <div class="modal-right">
+        <div>
+          <span class="insp-cat-tag" id="mCatBadge">Kategori</span>
+          <h2 id="mTitle" class="modal-element-title">Hidrogen (H)</h2>
+          <p id="mSummary" class="modal-element-summary"></p>
+        </div>
+
+        <div>
+          <div class="modal-section-title">
+            <span>Garis Spektrum Emisi Optik Terverifikasi (NIST 380–750 nm)</span>
+            <span id="mSpectrumStatus" class="mono-muted"></span>
+          </div>
+          <canvas id="modalSpectrumCanvas" class="spectrum-bar modal-spectrum-bar" width="520" height="28"></canvas>
+        </div>
+
+        <div>
+          <div class="modal-section-title">Diagram Spin Elektron Aufbau & Pauli (↑↓)</div>
+          <div class="orbital-boxes-mini" id="modalOrbitalBoxes"></div>
+        </div>
+
+        <div class="props-grid-modal">
+          <div class="prop-item"><small>Massa Atom</small><span id="mMass">-</span></div>
+          <div class="prop-item"><small>Konfigurasi</small><span id="mConfig">-</span></div>
+          <div class="prop-item"><small>Titik Leleh / Didih</small><span id="mMeltBoil">-</span></div>
+          <div class="prop-item"><small>Elektronegativitas</small><span id="mEn">-</span></div>
+          <div class="prop-item"><small>Bilangan Oksidasi</small><span id="mOxStates">-</span></div>
+          <div class="prop-item"><small>Fase (<em id="mTempLabel">298 K</em>)</small><span id="mPhaseNow">-</span></div>
+        </div>
+
+        <div>
+          <div class="modal-section-title">Status Stabilitas Nuklir & Rantai Peluruhan Isotop</div>
+          <div class="decay-chain-box" id="mDecayBox"></div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-tool active" id="btnModalSendLab">
+            Masukkan ke Slot Lab Sintesis
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE MODAL (CTRL + K) -->
+  <div class="cmd-overlay" id="cmdOverlay" role="dialog" aria-modal="true" aria-label="Pencarian Cepat Command Palette">
+    <div class="cmd-box">
+      <div class="cmd-input-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="cmdInput" class="cmd-input" placeholder="Ketik nama unsur, simbol, nomor atom..." aria-label="Ketik perintah atau nama unsur">
+        <span class="kbd-badge" style="position:static; transform:none;">ESC</span>
+      </div>
+      <div class="cmd-list" id="cmdList" role="listbox"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
