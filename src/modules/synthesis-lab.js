@@ -239,6 +239,7 @@ function startReactorAnimation(colorA, colorB, colorProd, labelText) {
   function animate() {
     ctx.clearRect(0, 0, width, height);
     const cx = width / 2, cy = height / 2;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
     if (t < 28) {
       const p = t / 28;
@@ -249,17 +250,17 @@ function startReactorAnimation(colorA, colorB, colorProd, labelText) {
       ctx.beginPath(); ctx.arc(cx + dist, cy, 9, 0, Math.PI * 2); ctx.fill();
     } else {
       const pulse = Math.sin((t - 28) * 0.15) * 2;
-      ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+      ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.2)' : 'rgba(255, 255, 255, 0.22)';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(cx, cy, 32 + pulse, 0, Math.PI * 2); ctx.stroke();
 
-      ctx.fillStyle = '#18181c';
+      ctx.fillStyle = isLight ? '#e2e8f0' : '#18181c';
       ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = colorProd;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      ctx.fillStyle = '#fafafa';
+      ctx.fillStyle = isLight ? '#090d16' : '#fafafa';
       ctx.font = '600 11px JetBrains Mono, monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';

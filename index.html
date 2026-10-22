@@ -21,6 +21,18 @@
   <link rel="stylesheet" href="./styles/tokens.css">
   <link rel="stylesheet" href="./styles/layout.css">
   <link rel="stylesheet" href="./styles/components.css">
+
+  <!-- Immediate Theme Initialization to Prevent FOUC -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('pt_theme');
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      const theme = saved || (prefersLight ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#f1f4f9' : '#09090b');
+    })();
+  </script>
 </head>
 <body>
 
@@ -81,6 +93,32 @@
           <line x1="6" y1="20" x2="6" y2="14"></line>
         </svg>
         <span>Komparator</span>
+      </button>
+
+      <!-- Switch Bar Mode Gelap / Terang -->
+      <button type="button" class="theme-switch-bar" id="btnThemeToggle" role="switch" aria-checked="false" aria-label="Beralih antara Mode Gelap dan Terang" title="Beralih antara Mode Gelap dan Terang">
+        <span class="switch-bar-track">
+          <span class="track-icon track-icon-moon" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </span>
+          <span class="track-icon track-icon-sun" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </span>
+          <span class="switch-bar-thumb" aria-hidden="true">
+            <svg class="thumb-icon-moon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="thumb-icon-sun" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </span>
+        </span>
       </button>
 
       <!-- Toggle Dukungan (Saweria Opsi B) -->
@@ -248,7 +286,7 @@
     <div class="workbench-card support-card">
       <div class="workbench-header">
         <div class="workbench-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" aria-hidden="true">
+          <svg class="support-heart-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
           </svg>
           <span>Dukung Pengembangan Proyek Open-Source</span>
@@ -289,17 +327,8 @@
         </div>
 
         <div class="support-qr-box">
-          <div class="qr-frame" aria-hidden="true">
-            <svg viewBox="0 0 120 120" width="110" height="110" fill="none">
-              <rect width="120" height="120" rx="8" fill="#18181c" stroke="rgba(255,255,255,0.15)"/>
-              <rect x="14" y="14" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
-              <rect x="22" y="22" width="12" height="12" fill="#f59e0b"/>
-              <rect x="78" y="14" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
-              <rect x="86" y="22" width="12" height="12" fill="#f59e0b"/>
-              <rect x="14" y="78" width="28" height="28" rx="4" stroke="#f59e0b" stroke-width="4"/>
-              <rect x="22" y="86" width="12" height="12" fill="#f59e0b"/>
-              <path d="M54 20h12v12H54zM54 44h12v24H54zM46 78h16v12H46zM74 54h16v16H74zM78 82h24v20H78z" fill="#fafafa" opacity="0.85"/>
-            </svg>
+          <div class="qr-frame">
+            <img src="./assets/saweria-qr.svg" alt="QR Code Saweria Nocturnalist" class="qr-image" width="140" height="140">
           </div>
           <div class="qr-caption">
             <strong>Saweria Nocturnalist</strong>

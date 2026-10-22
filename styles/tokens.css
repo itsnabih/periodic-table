@@ -19,8 +19,40 @@
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
 
+  --topbar-bg: rgba(9, 9, 11, 0.88);
+  --cell-actions-bg: rgba(9, 9, 11, 0.94);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.72);
+  --shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.6);
+
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-base: #f1f4f9;
+  --bg-surface: #ffffff;
+  --bg-elevated: #e2e8f0;
+  --bg-hover: #cbd5e1;
+  --bg-active: #b8c4d4;
+
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --border-default: rgba(15, 23, 42, 0.16);
+  --border-strong: rgba(15, 23, 42, 0.32);
+
+  --text-primary: #090d16;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --accent-primary: #090d16;
+  --accent-blue: #2563eb;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+
+  --topbar-bg: rgba(255, 255, 255, 0.92);
+  --cell-actions-bg: rgba(255, 255, 255, 0.96);
+  --modal-overlay-bg: rgba(15, 23, 42, 0.45);
+  --shadow-elevated: 0 20px 48px rgba(15, 23, 42, 0.14);
 }
 
 * {
@@ -39,9 +71,14 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   padding-bottom: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Modern Dark Scrollbar */
+.topbar, .drawer-section, .workbench-card, .table-container, .center-inspector, .el-cell, .modal-window, .cmd-box {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Modern Adaptive Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

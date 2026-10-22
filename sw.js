@@ -1,9 +1,10 @@
-const CACHE_NAME = 'periodic-workbench-v3';
+const CACHE_NAME = 'periodic-workbench-v3.1';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './assets/favicon.svg',
+  './assets/saweria-qr.svg',
   './styles/tokens.css',
   './styles/layout.css',
   './styles/components.css',

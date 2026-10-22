@@ -48,6 +48,11 @@ export function updateComparison() {
 function drawRadarComparison(elA, elB) {
   const svg = document.getElementById('radarSvg');
   const cx = 120, cy = 105, rMax = 72;
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const ringStroke = isLight ? "rgba(15, 23, 42, 0.12)" : "rgba(255, 255, 255, 0.08)";
+  const lineStroke = isLight ? "rgba(15, 23, 42, 0.16)" : "rgba(255, 255, 255, 0.1)";
+  const labelColor = isLight ? "#475569" : "#a1a1aa";
+
   const axes = [
     { label: "Massa", getVal: e => e.mass / 294 },
     { label: "EN", getVal: e => (e.en || 0) / 3.98 },
@@ -62,7 +67,7 @@ function drawRadarComparison(elA, elB) {
       const ang = -Math.PI / 2 + (i * 2 * Math.PI) / axes.length;
       return `${cx + rMax * level * Math.cos(ang)},${cy + rMax * level * Math.sin(ang)}`;
     }).join(' ');
-    html += `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>`;
+    html += `<polygon points="${pts}" fill="none" stroke="${ringStroke}" stroke-width="1"/>`;
   });
 
   axes.forEach((ax, i) => {
@@ -71,8 +76,8 @@ function drawRadarComparison(elA, elB) {
     const y2 = cy + rMax * Math.sin(ang);
     const lx = cx + (rMax + 20) * Math.cos(ang);
     const ly = cy + (rMax + 14) * Math.sin(ang);
-    html += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
-    html += `<text x="${lx}" y="${ly}" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono" text-anchor="middle" dominant-baseline="middle">${ax.label}</text>`;
+    html += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="${lineStroke}" stroke-width="1"/>`;
+    html += `<text x="${lx}" y="${ly}" fill="${labelColor}" font-size="9" font-family="JetBrains Mono" text-anchor="middle" dominant-baseline="middle">${ax.label}</text>`;
   });
 
   const buildPoly = (el, strokeCol, fillCol) => {

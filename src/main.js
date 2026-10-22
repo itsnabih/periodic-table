@@ -27,11 +27,53 @@ window.addEventListener('DOMContentLoaded', () => {
   loadLocalLabHistory();
 
   bindUIEvents();
+  initTheme();
 
   if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 });
+
+function initTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  updateThemeButtonUI(currentTheme);
+
+  const btn = document.getElementById('btnThemeToggle');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const nextTheme = isLight ? 'dark' : 'light';
+    setTheme(nextTheme);
+  });
+}
+
+export function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try {
+    localStorage.setItem('pt_theme', theme);
+  } catch (_) {}
+
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', theme === 'light' ? '#f1f4f9' : '#09090b');
+  }
+
+  updateThemeButtonUI(theme);
+  updateSpotlight(store.selectedElement);
+  if (document.getElementById('drawerCompare') && document.getElementById('drawerCompare').classList.contains('open')) {
+    updateComparison();
+  }
+}
+
+function updateThemeButtonUI(theme) {
+  const btn = document.getElementById('btnThemeToggle');
+  if (btn) {
+    const isLight = theme === 'light';
+    btn.setAttribute('aria-checked', isLight ? 'true' : 'false');
+    btn.setAttribute('title', isLight ? 'Beralih ke Mode Gelap' : 'Beralih ke Mode Terang');
+  }
+}
 
 function toggleDrawer(which) {
   const map = {

@@ -141,6 +141,7 @@ export function startBohrAnimation(el, accentColor) {
       bohrAnimId = requestAnimationFrame(draw);
       return;
     }
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     ctx.clearRect(0, 0, width, height);
 
     ctx.fillStyle = currentBohrColor;
@@ -148,7 +149,7 @@ export function startBohrAnimation(el, accentColor) {
     ctx.arc(cx, cy, 14, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#fafafa';
+    ctx.fillStyle = '#ffffff';
     ctx.font = '700 10px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -159,7 +160,7 @@ export function startBohrAnimation(el, accentColor) {
 
     shells.forEach((count, sIdx) => {
       const r = shells.length === 1 ? 52 : minR + sIdx * step;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.16)' : 'rgba(255, 255, 255, 0.12)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -172,7 +173,7 @@ export function startBohrAnimation(el, accentColor) {
         const theta = baseAng + (i * 2 * Math.PI) / count;
         ctx.beginPath();
         ctx.arc(cx + r * Math.cos(theta), cy + r * Math.sin(theta), 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#fafafa';
+        ctx.fillStyle = isLight ? '#0f172a' : '#fafafa';
         ctx.fill();
       }
     });
