@@ -443,25 +443,128 @@
   background: var(--bg-base);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  padding: 14px 18px;
+  padding: 12px 16px;
   display: grid;
-  grid-template-columns: 100px 1fr 220px;
-  gap: 18px;
-  align-items: center;
+  grid-template-columns: minmax(260px, 310px) 1fr 220px;
+  gap: 16px;
+  align-items: stretch;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .synth-output {
     grid-template-columns: 1fr;
   }
 }
 
-#reactionCanvas {
-  width: 100px;
-  height: 100px;
-  border-radius: 6px;
+/* Molecular Bond Stage Container */
+.mol-stage-box {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+[data-theme="light"] .mol-stage-box {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.mol-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+}
+
+[data-theme="light"] .mol-stage-header {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.mol-stage-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mol-stage-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-mol-tool {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s;
+}
+
+[data-theme="light"] .btn-mol-tool {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #64748b;
+}
+
+.btn-mol-tool:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.btn-mol-tool.active {
+  background: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+}
+
+[data-theme="light"] .btn-mol-tool.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.mol-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 165px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+#reactionCanvas {
+  width: 100%;
+  height: 165px;
+  border-radius: 0 0 6px 6px;
+  background: transparent;
+  display: block;
+}
+
+.synth-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .synth-tag {

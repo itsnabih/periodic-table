@@ -1,4 +1,4 @@
-const CACHE_NAME = 'periodic-workbench-v3.1';
+const CACHE_NAME = 'periodic-workbench-v3.2';
 const ASSETS = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const ASSETS = [
   './src/modules/synthesis-lab.js',
   './src/modules/comparator.js',
   './src/modules/quantum-canvas.js',
+  './src/modules/molecular-canvas.js',
   './src/utils/dom.js',
   './src/utils/url-state.js'
 ];

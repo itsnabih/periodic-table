@@ -1,10 +1,19 @@
 import { ELEMENTS, CATEGORIES } from '../data/elements.js';
 import { KNOWN_COMPOUNDS } from '../data/compounds.js';
 import { store } from '../state/store.js';
-import { setupHiDPICanvas } from '../utils/dom.js';
 import { syncStateToURL } from '../utils/url-state.js';
+import {
+  renderMolecularBond,
+  renderFusionBond,
+  generateProceduralStructure,
+  stopMolecularAnimation
+} from './molecular-canvas.js';
 
-let reactorAnimId = null;
+let molOptions = {
+  showAngles: true,
+  showDipole: true
+};
+let lastSynthesisResult = null;
 
 export function setLabMode(mode) {
   store.labMode = mode;
@@ -120,6 +129,7 @@ export function runSynthesis(saveToLocal) {
   const formulaEl = document.getElementById('resFormula');
   const titleEl = document.getElementById('resTitle');
   const descEl = document.getElementById('resDesc');
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
   let resultSummary = "";
 
@@ -134,7 +144,8 @@ export function runSynthesis(saveToLocal) {
       descEl.textContent = `Penggabungan inti ${elA.name} dan ${elB.name} menghasilkan inti ${fusedEl.name} (${fusedEl.symbol}). ${note}.`;
       updateStoichiometryUI(elA, 1, elB, 1, "Nukleosintesis Inti", "N/A (Reaksi Inti)");
       resultSummary = `${elA.symbol} + ${elB.symbol} → ${fusedEl.symbol}`;
-      startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, CATEGORIES[fusedEl.category].color, fusedEl.symbol);
+      lastSynthesisResult = { type: 'fusion', elA, elB, fusedEl };
+      renderFusionBond('reactionCanvas', elA, elB, fusedEl, isLight);
     } else {
       badgeEl.textContent = `Trans-Oganesson · Z = ${newZ}`;
       formulaEl.textContent = `U${newZ}`;
@@ -142,7 +153,8 @@ export function runSynthesis(saveToLocal) {
       descEl.textContent = `Jumlah proton (${newZ}) melampaui batas tabel periodik saat ini (Z=118). Berada pada zona riset pulau stabilitas trans-aktinida.`;
       updateStoichiometryUI(elA, 1, elB, 1, "Inti Superberat", "N/A");
       resultSummary = `${elA.symbol} + ${elB.symbol} → Z=${newZ}`;
-      startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, "#a1a1aa", `Z=${newZ}`);
+      lastSynthesisResult = { type: 'fusion', elA, elB, fusedEl: null };
+      renderFusionBond('reactionCanvas', elA, elB, null, isLight);
     }
   } else {
     const minZ = Math.min(elA.z, elB.z);
@@ -161,7 +173,8 @@ export function runSynthesis(saveToLocal) {
       descEl.textContent = comp.desc;
       updateStoichiometryUI(firstEl, comp.cA, secondEl, comp.cB, comp.geom, dEn);
       resultSummary = `${elA.symbol} + ${elB.symbol} → ${comp.formula}`;
-      startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, "#fafafa", comp.formula);
+      lastSynthesisResult = { type: 'molecular', compound: comp };
+      renderMolecularBond('reactionCanvas', comp, molOptions);
     } else if (elA.category === 'noble' || elB.category === 'noble') {
       badgeEl.textContent = "Gas Mulia Inert";
       formulaEl.textContent = `${elA.symbol} + ${elB.symbol}`;
@@ -169,7 +182,9 @@ export function runSynthesis(saveToLocal) {
       descEl.textContent = "Konfigurasi kulit valensi oktet penuh membuat gas mulia bersifat monoatomik inert pada kondisi standar.";
       updateStoichiometryUI(elA, 1, elB, 1, "Monoatomik Bebas", "0.00");
       resultSummary = `${elA.symbol} + ${elB.symbol} (Inert)`;
-      startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, "#71717a", "Inert");
+      const inertComp = { formula: `${elA.symbol} + ${elB.symbol}`, type: "Gas Mulia Inert", bondCategory: "none" };
+      lastSynthesisResult = { type: 'molecular', compound: inertComp };
+      renderMolecularBond('reactionCanvas', inertComp, molOptions);
     } else {
       const isMetal = (cat) => ['alkali','alkaline','transition','post-transition','lanthanide','actinide'].includes(cat);
       if (isMetal(elA.category) && isMetal(elB.category)) {
@@ -180,7 +195,9 @@ export function runSynthesis(saveToLocal) {
         descEl.textContent = "Delokalisasi lautan elektron konduksi membentuk struktur kisi kristal logam campuran.";
         updateStoichiometryUI(elA, 1, elA.z === elB.z ? null : elB, elA.z === elB.z ? 0 : 1, "Kisi Kristal Logam", "Alloy");
         resultSummary = `Alloy ${symFormula}`;
-        startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, "#10b981", symFormula);
+        const procComp = generateProceduralStructure(elA, elB, symFormula, "Ikatan Logam (Alloy)", 1, 1);
+        lastSynthesisResult = { type: 'molecular', compound: procComp };
+        renderMolecularBond('reactionCanvas', procComp, molOptions);
       } else {
         const first = (elA.en || 1.5) <= (elB.en || 1.5) ? elA : elB;
         const second = first === elA ? elB : elA;
@@ -214,7 +231,9 @@ export function runSynthesis(saveToLocal) {
         descEl.textContent = `Sintesis stoikiometri berdasarkan bilangan oksidasi stabil (+${v1} : -${v2}) antara ${first.name} dan ${second.name}.`;
         updateStoichiometryUI(first, first.z === second.z ? 2 : s1, first.z === second.z ? null : second, first.z === second.z ? 0 : s2, geom, dEn);
         resultSummary = `${elA.symbol} + ${elB.symbol} → ${formula}`;
-        startReactorAnimation(CATEGORIES[elA.category].color, CATEGORIES[elB.category].color, "#3b82f6", formula);
+        const procComp = generateProceduralStructure(first, second, formula, bondType, s1, s2);
+        lastSynthesisResult = { type: 'molecular', compound: procComp };
+        renderMolecularBond('reactionCanvas', procComp, molOptions);
       }
     }
   }
@@ -227,52 +246,46 @@ export function runSynthesis(saveToLocal) {
   }
 }
 
-// Perbaikan Performa: Finite Animation (Berhenti otomatis setelah t === 60 agar tidak membocorkan CPU/GPU)
-function startReactorAnimation(colorA, colorB, colorProd, labelText) {
-  if (reactorAnimId) cancelAnimationFrame(reactorAnimId);
-  const canvas = document.getElementById('reactionCanvas');
-  const setup = setupHiDPICanvas(canvas);
-  if (!setup) return;
-  const { ctx, width, height } = setup;
-  let t = 0;
+export function initMolecularStageControls() {
+  const btnAngles = document.getElementById('btnToggleAngles');
+  const btnDipole = document.getElementById('btnToggleDipole');
+  const btnReplay = document.getElementById('btnReplayReaction');
 
-  function animate() {
-    ctx.clearRect(0, 0, width, height);
-    const cx = width / 2, cy = height / 2;
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-
-    if (t < 28) {
-      const p = t / 28;
-      const dist = (1 - p) * 30;
-      ctx.fillStyle = colorA;
-      ctx.beginPath(); ctx.arc(cx - dist, cy, 9, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = colorB;
-      ctx.beginPath(); ctx.arc(cx + dist, cy, 9, 0, Math.PI * 2); ctx.fill();
-    } else {
-      const pulse = Math.sin((t - 28) * 0.15) * 2;
-      ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.2)' : 'rgba(255, 255, 255, 0.22)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(cx, cy, 32 + pulse, 0, Math.PI * 2); ctx.stroke();
-
-      ctx.fillStyle = isLight ? '#e2e8f0' : '#18181c';
-      ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = colorProd;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      ctx.fillStyle = isLight ? '#090d16' : '#fafafa';
-      ctx.font = '600 11px JetBrains Mono, monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(labelText.slice(0, 6), cx, cy);
-    }
-
-    t++;
-    if (t <= 60) {
-      reactorAnimId = requestAnimationFrame(animate);
-    } else {
-      reactorAnimId = null;
-    }
+  if (btnAngles) {
+    btnAngles.addEventListener('click', () => {
+      molOptions.showAngles = !molOptions.showAngles;
+      btnAngles.classList.toggle('active', molOptions.showAngles);
+      btnAngles.setAttribute('aria-pressed', String(molOptions.showAngles));
+      replayCurrentSynthesis();
+    });
   }
-  animate();
+
+  if (btnDipole) {
+    btnDipole.addEventListener('click', () => {
+      molOptions.showDipole = !molOptions.showDipole;
+      btnDipole.classList.toggle('active', molOptions.showDipole);
+      btnDipole.setAttribute('aria-pressed', String(molOptions.showDipole));
+      replayCurrentSynthesis();
+    });
+  }
+
+  if (btnReplay) {
+    btnReplay.addEventListener('click', () => {
+      replayCurrentSynthesis();
+    });
+  }
 }
+
+export function replayCurrentSynthesis() {
+  if (!lastSynthesisResult) {
+    runSynthesis(false);
+    return;
+  }
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (lastSynthesisResult.type === 'fusion') {
+    renderFusionBond('reactionCanvas', lastSynthesisResult.elA, lastSynthesisResult.elB, lastSynthesisResult.fusedEl, isLight);
+  } else if (lastSynthesisResult.compound) {
+    renderMolecularBond('reactionCanvas', lastSynthesisResult.compound, molOptions);
+  }
+}
+

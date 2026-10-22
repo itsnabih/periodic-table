@@ -188,8 +188,32 @@
         </button>
 
         <div class="synth-output" aria-live="polite">
-          <canvas id="reactionCanvas" width="100" height="100" aria-label="Visualisasi Reaksi"></canvas>
-          <div>
+          <!-- Molecular Bond Stage Box -->
+          <div class="mol-stage-box">
+            <div class="mol-stage-header">
+              <span class="mol-stage-title">Ikatan Molekul</span>
+              <div class="mol-stage-actions">
+                <button type="button" class="btn-mol-tool active" id="btnToggleAngles" title="Tampilkan / Sembunyikan Anotasi Sudut Ikatan" aria-pressed="true">
+                  ∠ Sudut
+                </button>
+                <button type="button" class="btn-mol-tool active" id="btnToggleDipole" title="Tampilkan / Sembunyikan Momen Dipol (δ⁺ / δ⁻)" aria-pressed="true">
+                  δ Dipol
+                </button>
+                <button type="button" class="btn-mol-tool" id="btnReplayReaction" title="Putar Ulang Animasi Pembentukan Ikatan">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                    <path d="M1 4v6h6M23 20v-6h-6"></path>
+                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                  </svg>
+                  <span>Replay</span>
+                </button>
+              </div>
+            </div>
+            <div class="mol-canvas-wrapper">
+              <canvas id="reactionCanvas" width="280" height="175" aria-label="Visualisasi Ikatan Molekul Interaktif"></canvas>
+            </div>
+          </div>
+
+          <div class="synth-info-col">
             <span class="synth-tag" id="resBadge">Ikatan Ionik</span>
             <div class="synth-formula" id="resFormula">NaCl</div>
             <div class="synth-name" id="resTitle">Natrium Klorida</div>

@@ -2,7 +2,7 @@ import { ELEMENTS } from './data/elements.js';
 import { store } from './state/store.js';
 import { loadStateFromURL, syncStateToURL } from './utils/url-state.js';
 import { renderCategoryLegend, renderPeriodicGrid, updateVisualState, updateSpotlight, openElementModal, closeModal } from './modules/periodic-grid.js';
-import { setLabMode, selectSlot, assignElementToLab, loadPreset, updateLabSlotsUI, runSynthesis, loadLocalLabHistory } from './modules/synthesis-lab.js';
+import { setLabMode, selectSlot, assignElementToLab, loadPreset, updateLabSlotsUI, runSynthesis, loadLocalLabHistory, initMolecularStageControls, replayCurrentSynthesis } from './modules/synthesis-lab.js';
 import { initComparatorDropdowns, updateComparison } from './modules/comparator.js';
 
 let tempRafPending = false;
@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateLabSlotsUI();
   setLabMode(store.labMode);
   loadLocalLabHistory();
+  initMolecularStageControls();
 
   bindUIEvents();
   initTheme();
@@ -64,6 +65,9 @@ export function setTheme(theme) {
   if (document.getElementById('drawerCompare') && document.getElementById('drawerCompare').classList.contains('open')) {
     updateComparison();
   }
+  if (document.getElementById('drawerLab') && document.getElementById('drawerLab').classList.contains('open')) {
+    replayCurrentSynthesis();
+  }
 }
 
 function updateThemeButtonUI(theme) {
@@ -92,6 +96,9 @@ function toggleDrawer(which) {
 
   if (which === 'compare' && isOpen) {
     updateComparison();
+  }
+  if (which === 'lab' && isOpen) {
+    replayCurrentSynthesis();
   }
 }
 
