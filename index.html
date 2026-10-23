@@ -128,6 +128,16 @@
         </svg>
         <span>Dukungan</span>
       </button>
+
+      <!-- Tombol Sambutan / Info Workbench -->
+      <button type="button" class="btn-tool" id="btnOpenWelcome" aria-label="Tentang Workbench & Dukungan Developer" title="Tentang Workbench & Panduan">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>Info</span>
+      </button>
     </nav>
   </header>
 
@@ -500,6 +510,191 @@
         <span class="kbd-badge" style="position:static; transform:none;">ESC</span>
       </div>
       <div class="cmd-list" id="cmdList" role="listbox"></div>
+    </div>
+  </div>
+
+  <!-- WELCOME / ONBOARDING MODAL -->
+  <div class="welcome-overlay" id="welcomeModal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-hidden="true">
+    <div class="welcome-window">
+      <!-- Atmospheric Nocturnal Landscape Hero -->
+      <div class="welcome-hero-landscape">
+        <button type="button" class="welcome-close-btn" id="btnCloseWelcome" aria-label="Tutup jendela sambutan (Esc)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <svg class="welcome-landscape-svg" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <!-- Sky Gradient matching reference image -->
+            <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1b1238" />
+              <stop offset="32%" stop-color="#12183c" />
+              <stop offset="72%" stop-color="#162758" />
+              <stop offset="100%" stop-color="#0b1129" />
+            </linearGradient>
+
+            <!-- Shooting Star 1 Gradient (angled down-right) -->
+            <linearGradient id="meteorGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+              <stop offset="60%" stop-color="#93c5fd" stop-opacity="0.4" />
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
+            </linearGradient>
+
+            <!-- Shooting Star 2 Gradient (angled down-left) -->
+            <linearGradient id="meteorGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+              <stop offset="60%" stop-color="#c4b5fd" stop-opacity="0.4" />
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="1" />
+            </linearGradient>
+
+            <!-- Moon & Radial Atmosphere Glow -->
+            <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="25%" stop-color="#e0f2fe" stop-opacity="0.85" />
+              <stop offset="55%" stop-color="#60a5fa" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- Mountain Ridge Gradients -->
+            <linearGradient id="mountainGradBack" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#151d45" />
+              <stop offset="100%" stop-color="#0d1430" />
+            </linearGradient>
+
+            <linearGradient id="mountainGradMid" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#0d1432" />
+              <stop offset="100%" stop-color="#080d22" />
+            </linearGradient>
+
+            <linearGradient id="mountainGradFront" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#070c1e" />
+              <stop offset="100%" stop-color="#040713" />
+            </linearGradient>
+          </defs>
+
+          <!-- Sky Background -->
+          <rect width="600" height="200" fill="url(#skyGrad)" />
+
+          <!-- Starfield -->
+          <g class="welcome-starfield" fill="#ffffff">
+            <circle cx="35" cy="40" r="1.1" opacity="0.6" />
+            <circle cx="65" cy="22" r="1.4" opacity="0.8" class="star-twinkle-1" />
+            <circle cx="105" cy="55" r="1.0" opacity="0.5" />
+            <circle cx="140" cy="28" r="1.5" opacity="0.9" class="star-twinkle-2" />
+            <circle cx="185" cy="45" r="1.2" opacity="0.7" />
+            <circle cx="230" cy="18" r="1.6" opacity="0.85" class="star-twinkle-3" />
+            <circle cx="280" cy="52" r="1.1" opacity="0.5" />
+            <circle cx="330" cy="25" r="1.3" opacity="0.75" />
+            <circle cx="380" cy="48" r="1.5" opacity="0.8" class="star-twinkle-1" />
+            <circle cx="430" cy="20" r="1.2" opacity="0.6" />
+            <circle cx="485" cy="45" r="1.7" opacity="0.95" class="star-twinkle-2" />
+            <circle cx="530" cy="22" r="1.1" opacity="0.6" />
+            <circle cx="570" cy="50" r="1.4" opacity="0.8" />
+            <circle cx="50" cy="78" r="0.9" opacity="0.5" />
+            <circle cx="555" cy="85" r="1.0" opacity="0.6" />
+            <circle cx="310" cy="65" r="0.9" opacity="0.4" />
+          </g>
+
+          <!-- Shooting Stars -->
+          <!-- Meteor 1 (Upper Left, streaking down-right) -->
+          <g class="meteor-streak-1">
+            <line x1="60" y1="52" x2="115" y2="92" stroke="url(#meteorGrad1)" stroke-width="1.8" stroke-linecap="round" />
+            <circle cx="115" cy="92" r="2.2" fill="#ffffff" filter="drop-shadow(0 0 4px #93c5fd)" />
+          </g>
+
+          <!-- Meteor 2 (Upper Right, streaking down-left) -->
+          <g class="meteor-streak-2">
+            <line x1="435" y1="35" x2="385" y2="78" stroke="url(#meteorGrad2)" stroke-width="1.6" stroke-linecap="round" />
+            <circle cx="385" cy="78" r="2.0" fill="#ffffff" filter="drop-shadow(0 0 4px #c4b5fd)" />
+          </g>
+
+          <!-- Mountain Ridge 1 (Far Layer) -->
+          <path d="M 0,135 Q 160,105 320,128 T 600,115 L 600,200 L 0,200 Z" fill="url(#mountainGradBack)" opacity="0.75" />
+
+          <!-- Celestial Rising Moon & Horizon Glow (Right horizon between ridges) -->
+          <circle cx="435" cy="115" r="32" fill="url(#moonGlow)" />
+          <circle cx="435" cy="115" r="14" fill="#ffffff" />
+
+          <!-- Mountain Ridge 2 (Middle Layer: Iconic left peak curving down) -->
+          <path d="M 0,110 C 55,105 85,65 145,65 C 215,65 255,138 365,138 C 435,138 495,122 600,132 L 600,200 L 0,200 Z" fill="url(#mountainGradMid)" />
+
+          <!-- Mountain Ridge 3 (Foreground Layer: Front wave framing the valley) -->
+          <path class="welcome-mountain-front" d="M 0,135 C 95,135 145,172 235,172 C 325,172 375,128 455,116 C 515,108 555,124 600,144 L 600,200 L 0,200 Z" fill="url(#mountainGradFront)" />
+        </svg>
+
+        <!-- Centered Typography overlay matching the reference image -->
+        <div class="welcome-hero-content">
+          <div class="welcome-hero-pill">v3.2 · SCIENTIFIC WORKBENCH</div>
+          <h2 id="welcomeTitle" class="welcome-hero-title">WELCOME</h2>
+          <div class="welcome-hero-sub">PERIODIC TABLE WORKBENCH</div>
+        </div>
+      </div>
+
+      <div class="welcome-body">
+        <p class="welcome-tagline">
+          Laboratorium kimia dan spektroskopi interaktif berbasis data terverifikasi IUPAC & NIST Atomic Spectra Database. Cepat, presisi, dan berjalan langsung di browser.
+        </p>
+
+        <div class="welcome-features-grid">
+          <div class="w-feature-card">
+            <div class="w-feature-num">01</div>
+            <div class="w-feature-body">
+              <strong>Laboratorium Sintesis Ikatan</strong>
+              <span>Visualisasi ikatan kovalen polar/nonpolar, ionik, logam, dan fusi inti atom Z₁ + Z₂.</span>
+            </div>
+          </div>
+          <div class="w-feature-card">
+            <div class="w-feature-num">02</div>
+            <div class="w-feature-body">
+              <strong>Simulator Suhu Termodinamika</strong>
+              <span>Geser temperatur 0 K hingga 6000 K untuk mengamati transisi fase padat, cair, dan gas.</span>
+            </div>
+          </div>
+          <div class="w-feature-card">
+            <div class="w-feature-num">03</div>
+            <div class="w-feature-body">
+              <strong>Spektroskopi Emisi NIST</strong>
+              <span>Garis spektrum optik empiris (380–750 nm), orbital Bohr, dan konfigurasi elektron Aufbau.</span>
+            </div>
+          </div>
+          <div class="w-feature-card">
+            <div class="w-feature-num">04</div>
+            <div class="w-feature-body">
+              <strong>Komparator Multi-Parameter</strong>
+              <span>Bandingkan dua unsur berdampingan melalui normalisasi grafik radar polygon.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gen Z Support Box -->
+        <div class="welcome-support-box">
+          <div class="w-support-header">
+            <div class="w-support-tag">Ocehan developer</div>
+            <a href="https://saweria.co/nocturnalist" target="_blank" rel="noopener noreferrer" class="w-saweria-link" title="Buka laman Saweria Nocturnalist">
+              saweria.co/nocturnalist ↗
+            </a>
+          </div>
+          <p class="w-support-text">
+            Selamat explore yak di web buatan developer kecil ini, semoga bermanfaat! Kalo mau beliin developer Kopi, sabi banget tuh mampir sawerianya di <a href="https://saweria.co/nocturnalist" target="_blank" rel="noopener noreferrer">saweria.co/nocturnalist</a>. Web ini bakal tetep 100% gratis dan bebas iklan selamanya. Happy exploring, guys! 🤙
+          </p>
+        </div>
+
+        <div class="welcome-footer">
+          <label class="welcome-checklist" for="chkDontShowWelcome">
+            <input type="checkbox" id="chkDontShowWelcome" checked>
+            <span>Jangan tampilkan lagi</span>
+          </label>
+
+          <button type="button" class="btn-start-explore" id="btnStartExplore">
+            <span>Mulai Eksplorasi</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

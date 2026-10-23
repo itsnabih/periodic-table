@@ -4,6 +4,7 @@ import { loadStateFromURL, syncStateToURL } from './utils/url-state.js';
 import { renderCategoryLegend, renderPeriodicGrid, updateVisualState, updateSpotlight, openElementModal, closeModal } from './modules/periodic-grid.js';
 import { setLabMode, selectSlot, assignElementToLab, loadPreset, updateLabSlotsUI, runSynthesis, loadLocalLabHistory, initMolecularStageControls, replayCurrentSynthesis } from './modules/synthesis-lab.js';
 import { initComparatorDropdowns, updateComparison } from './modules/comparator.js';
+import { initWelcomeModal } from './modules/welcome-modal.js';
 
 let tempRafPending = false;
 
@@ -26,6 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setLabMode(store.labMode);
   loadLocalLabHistory();
   initMolecularStageControls();
+  initWelcomeModal();
 
   bindUIEvents();
   initTheme();
